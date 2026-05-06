@@ -1,0 +1,17 @@
+{
+  "name": "luka-mcp-servers",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "dev:strategic": "npm run dev --workspace=packages/strategic-planning",
+    "dev:pipeline": "npm run dev --workspace=packages/pipeline-management",
+    "dev:process": "npm run dev --workspace=packages/process-design"
+  },
+  "devDependencies": {
+    "picocolors": "^1.1.1"
+  }
+}
