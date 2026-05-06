@@ -52,6 +52,6 @@ function createServer() {
   return server
 }
 
-app.listen(PORT, () => {
+app.listen(Number(PORT), '0.0.0.0', () => {
   logger.info(`LUKA Pipeline Management MCP Server running on port ${PORT}`)
 })
