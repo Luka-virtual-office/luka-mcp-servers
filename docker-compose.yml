@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  strategic-planning:
+    build: ./packages/strategic-planning
+    ports: ["3001:3001"]
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+  pipeline-management:
+    build: ./packages/pipeline-management
+    ports: ["3002:3002"]
+    environment:
+      - PORT=3002
+      - NODE_ENV=production
+  process-design:
+    build: ./packages/process-design
+    ports: ["3003:3003"]
+    environment:
+      - PORT=3003
+      - NODE_ENV=production
