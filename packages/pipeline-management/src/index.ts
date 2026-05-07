@@ -37,6 +37,28 @@ app.post('/messages', async (req, res) => {
   res.status(200).json({ received: true })
 })
 
+// Direct tool invocation endpoint (called by Supabase edge function)
+app.post('/invoke', async (req, res) => {
+  const { tool, input } = req.body
+  const handlers: Record<string, Function> = {
+    qualify_lead: qualifyLeadHandler,
+    predict_close_probability: predictCloseProbabilityHandler,
+    identify_at_risk_deals: identifyAtRiskDealsHandler,
+    next_best_action: nextBestActionHandler,
+    forecast_revenue: forecastRevenueHandler,
+  }
+  const handler = handlers[tool]
+  if (!handler) return res.status(404).json({ error: `Tool '${tool}' not found` })
+  try {
+    const result = await handler(input)
+    const text = result.content?.[0]?.text ?? JSON.stringify(result)
+    res.json({ result: text })
+  } catch (err: any) {
+    logger.error(`[invoke] ${tool} failed: ${err.message}`)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 function createServer() {
   const server = new McpServer({
     name: 'luka-pipeline-management',

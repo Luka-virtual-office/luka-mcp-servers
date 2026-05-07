@@ -37,6 +37,28 @@ app.post('/messages', async (req, res) => {
   res.status(200).json({ received: true })
 })
 
+// Direct tool invocation endpoint (called by Supabase edge function)
+app.post('/invoke', async (req, res) => {
+  const { tool, input } = req.body
+  const handlers: Record<string, Function> = {
+    map_process: mapProcessHandler,
+    generate_sop: generateSOPHandler,
+    measure_efficiency: measureEfficiencyHandler,
+    optimize_workflow: optimizeWorkflowHandler,
+    capacity_planning: capacityPlanningHandler,
+  }
+  const handler = handlers[tool]
+  if (!handler) return res.status(404).json({ error: `Tool '${tool}' not found` })
+  try {
+    const result = await handler(input)
+    const text = result.content?.[0]?.text ?? JSON.stringify(result)
+    res.json({ result: text })
+  } catch (err: any) {
+    logger.error(`[invoke] ${tool} failed: ${err.message}`)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 function createServer() {
   const server = new McpServer({
     name: 'luka-process-design',
